@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rishi Singh Quiz Game</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px}
+.card{width:100%;max-width:520px;background:white;border-radius:22px;padding:24px;box-shadow:0 12px 35px rgba(0,0,0,.25)}
+h1{text-align:center;margin:0 0 8px;font-size:28px}
+#progress{text-align:center;color:#666;margin-bottom:20px}
+.question{font-size:21px;font-weight:bold;margin-bottom:18px}
+.option{width:100%;padding:15px;margin:10px 0;border:2px solid #ddd;border-radius:13px;background:#fafafa;font-size:17px;text-align:left;cursor:pointer}
+.option:disabled{cursor:default}
+.correct{background:#d9f7df!important;border-color:#28a745!important}
+.wrong{background:#ffdede!important;border-color:#dc3545!important}
+#next{width:100%;padding:14px;border:0;border-radius:13px;background:#5b5be7;color:white;font-size:17px;margin-top:12px;cursor:pointer;display:none}
+#result{text-align:center}
+.score{font-size:34px;font-weight:bold;margin:20px}
+#restart{padding:14px 25px;border:0;border-radius:12px;background:#5b5be7;color:white;font-size:17px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="card">
+<div id="quiz">
+<h1>RISHI SINGH QUIZ GAME</h1>
+<div id="progress"></div>
+<div id="question" class="question"></div>
+<div id="options"></div>
+<button id="next">Next Question →</button>
+</div>
+<div id="result" style="display:none">
+<h1>🎉 Quiz Complete!</h1>
+<div class="score" id="score"></div>
+<p id="message"></p>
+<button id="restart">Play Again</button>
+</div>
+</div>
+
+<script>
+const questions=[
+{q:"What is the capital of India?",a:["Mumbai","Delhi","Kolkata","Chennai"],c:1},
+{q:"Which language are we learning?",a:["Python","Java","HTML","CSS"],c:0},
+{q:"How many days are in a week?",a:["5","6","7","8"],c:2},
+{q:"What is 5 + 5?",a:["8","10","12","15"],c:1},
+{q:"Which planet is called the Red Planet?",a:["Earth","Venus","Mars","Jupiter"],c:2},
+{q:"How many months are in a year?",a:["10","11","12","13"],c:2},
+{q:"What is the largest ocean?",a:["Pacific Ocean","Indian Ocean","Atlantic Ocean","Arctic Ocean"],c:0},
+{q:"What is 10 × 2?",a:["10","15","20","25"],c:2},
+{q:"Which animal is known as the King of the Jungle?",a:["Tiger","Lion","Elephant","Bear"],c:1},
+{q:"How many hours are in a day?",a:["12","18","24","30"],c:2}
+];
+
+let current=0,score=0,answered=false;
+const questionEl=document.getElementById("question");
+const optionsEl=document.getElementById("options");
+const progressEl=document.getElementById("progress");
+const nextBtn=document.getElementById("next");
+
+function showQuestion(){
+answered=false;
+nextBtn.style.display="none";
+const item=questions[current];
+progressEl.textContent="Question "+(current+1)+" of "+questions.length;
+questionEl.textContent=item.q;
+optionsEl.innerHTML="";
+item.a.forEach((text,index)=>{
+const btn=document.createElement("button");
+btn.className="option";
+btn.textContent=String.fromCharCode(65+index)+". "+text;
+btn.onclick=()=>checkAnswer(index,btn);
+optionsEl.appendChild(btn);
+});
+}
+
+function checkAnswer(index,clicked){
+if(answered)return;
+answered=true;
+const correct=questions[current].c;
+document.querySelectorAll(".option").forEach((btn,i)=>{
+btn.disabled=true;
+if(i===correct)btn.classList.add("correct");
+});
+if(index===correct)score++;
+else clicked.classList.add("wrong");
+nextBtn.style.display="block";
+}
+
+nextBtn.onclick=()=>{
+if(current < questions.length-1){
+current++;
+showQuestion();
+}else{
+showResult();
+}
+};
+
+function showResult(){
+document.getElementById("quiz").style.display="none";
+document.getElementById("result").style.display="block";
+document.getElementById("score").textContent=score+" / "+questions.length;
+document.getElementById("message").textContent=
+score>=8?"Excellent! 🎉":score>=5?"Good job! 👍":"Keep practicing! 💪";
+}
+
+document.getElementById("restart").onclick=()=>{
+current=0;
+score=0;
+document.getElementById("quiz").style.display="block";
+document.getElementById("result").style.display="none";
+showQuestion();
+};
+
+showQuestion();
+</script>
+</body>
+</html>
